@@ -1,0 +1,9 @@
+{
+    "dbConfig": {
+        "user": "dbadmin",
+        "password": "Espl@123",
+        "server": "tcp:einterceptor.database.windows.net,1433",
+        "database": "EInterceptor"
+    },
+    "sentimentApiUrl": "https://pythonsentimentapplication.azurewebsites.net/sentiment"
+}
