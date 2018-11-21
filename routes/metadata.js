@@ -178,12 +178,17 @@ router.post("/emaildataupdate", async (req, res) => {
 })
 
 router.post("/emaildata/bulkUpdate", async (req, res) => {
-let emailData = req.body;
-for (var i = 0, len = emailData.length; i < len; i++) {
+try{
+ let emailData = req.body;
+  for (var i = 0, len = emailData.length; i < len; i++) {
   var query = 'UPDATE dbo.SentimentAnalysisMetadata SET IsExported = 1 WHERE Id = '+ emailData[i].Id; 
   const pool = await poolPromise;
   const result = await pool.request().query(query);  
-}
+  return res.status(200).send("Success");
+  }
+} catch (error) {
+   return res.status(404).send("Fail");
+  }
 });
 
 router.post("/emaildata/azurestorage", async (req, res) => {
@@ -203,16 +208,27 @@ router.post("/emaildata/azurestorage", async (req, res) => {
         console.log("file uploaded");
         return res
         .status(200)
-        .send("file uploaded");
+        .send("Success");
         } else {
         return res
         .status(404)
-        .send("Error in file upload");
+        .send("Error");
         }
       }
     );
   });
 });
+
+ router.post("/tsvRunEngine", async(req, res)=>{
+    try{
+       const response = await axios.post(configs.get("tsvRunEngineApiUrl"),{
+     });
+     return res.status(200).send(response);
+    }
+    catch(error){
+    return res.status(404).send(error);
+   }
+ })
 
 function validate(email) {
   const schema = {
