@@ -155,7 +155,7 @@ router.get("/emaildata", async (req, res) => {
 });
 
 router.get("/verifiedEmails", async (req, res) => {
-  var query = "select Id, Subject, Verified from dbo.SentimentAnalysisMetadata WHERE Verified = 0 OR Verified = 1 And IsExported = 0";
+  var query = "select Id, Subject, Verified , IsExported from dbo.SentimentAnalysisMetadata WHERE (Verified = 0 OR Verified = 1) And IsExported = 0";
   const pool = await poolPromise;
   const result = await pool.request().query(query);
   res.send(result.recordset);
@@ -184,8 +184,8 @@ try{
   var query = 'UPDATE dbo.SentimentAnalysisMetadata SET IsExported = 1 WHERE Id = '+ emailData[i].Id; 
   const pool = await poolPromise;
   const result = await pool.request().query(query);  
-  return res.status(200).send("Success");
   }
+  return res.status(200).send("Success");
 } catch (error) {
    return res.status(404).send("Fail");
   }
