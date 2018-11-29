@@ -223,7 +223,7 @@ router.post("/emaildata/azurestorage", async (req, res) => {
     try{
        const response = await axios.post(configs.get("tsvRunEngineApiUrl"),{
      });
-     return res.status(200).send(response);
+     return res.status(200).send(response.data);
     }
     catch(error){
     return res.status(404).send(error);
