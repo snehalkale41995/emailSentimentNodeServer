@@ -15,9 +15,9 @@ module.exports = function (app) {
      res.sendFile(path.join(public, "index.html"));
     });
 
-    var sentimentScheduler = schedule.scheduleJob('54 * * * *', async function(){
-      const result = await initEmailSentiment();
-    });
+    // var sentimentScheduler = schedule.scheduleJob('54 * * * *', async function(){
+    //   const result = await initEmailSentiment();
+    // });
 
     app.use("/", express.static(public));
     app.use('/api/metadata', metadata);

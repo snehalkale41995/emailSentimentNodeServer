@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
     res.status(400).send(error.details[0].message);
     return;
   }
-
+  let EmailBody = req.body.Body;
   let Subject = req.body.Subject;
   let ConversationId = req.body.ConversationId;
   let Sender = req.body.From;
@@ -39,20 +39,22 @@ router.post("/", async (req, res) => {
     Subject: Subject,
     Body: req.body.Body
   });
-
-  const SentimentScore = response.data.BodyScore.toFixed(2);
-  const Sentiment = Utilities.extractSentiment(SentimentScore);
-  const SubjectScore = response.data.SubjectScore.toFixed(2);
+ 
+  const Subjectivity = Math.round(response.data.BodySubjectivity * 100) / 100;
   const Keywords = response.data.BodyKeywords;
-  const Subjectivity = response.data.BodySubjectivity.toFixed(2);
+  const SubjectScore = Math.round(response.data.SubjectScore * 100) / 100;
+  var SentimentScore = Math.round(response.data.BodyScore * 100) / 100;
+  const Sentiment = Utilities.extractSentiment(SentimentScore);
+  const TextAbout = response.data.ThisTextIsAbout;
+  const ExplicitContent = response.data.ExplicitContent;
+  const SubjectSubjectivity = Math.round(response.data.SubjectSubjectivity * 100) / 100;
+  const Categorization = response.data.BodyCategory;
   const Intent = response.data.BodyIntentActions;
 
-  var query =
-    "Insert into dbo.SentimentAnalysisMetadata(Sentiment, ConversationId, Subject, Sender, ToList, CCList, SentimentScore, SubjectScore, Domain, AccountName,LocalTimeStamp, GMTTimeStamp, Keywords, Subjectivity, Intent, CreatedAt )values" +
-    "(@Sentiment, @ConversationId,@Subject,@Sender,@ToList,@CCList,@SentimentScore, @SubjectScore , @Domain, @AccountName, @LocalTimeStamp, @GMTTimeStamp,@Keywords ,@Subjectivity,@Intent,@CreatedAt)";
-
+   var query =
+    "Insert into dbo.SentimentAnalysisMetadata(Sentiment, ConversationId, Subject, Sender, ToList, CCList, SentimentScore,  SubjectScore, Domain, AccountName,LocalTimeStamp, GMTTimeStamp, Keywords,Subjectivity, Intent, CreatedAt, Categorization ,SubjectSubjectivity,ExplicitContent, TextAbout , EmailBody )values" +
+    "(@Sentiment, @ConversationId,@Subject,@Sender,@ToList,@CCList, @SentimentScore, @SubjectScore , @Domain, @AccountName,@LocalTimeStamp, @GMTTimeStamp,@Keywords ,@Subjectivity,@Intent,@CreatedAt,@Categorization,@SubjectSubjectivity,@ExplicitContent,@TextAbout, @EmailBody )";
   const pool = await poolPromise;
-
   const result = await pool
     .request()
     .input("Sentiment", Sentiment)
@@ -71,8 +73,13 @@ router.post("/", async (req, res) => {
     .input("Subjectivity", Subjectivity)
     .input("Intent", Intent)
     .input("CreatedAt", new Date())
+    .input("Categorization", Categorization)
+    .input("SubjectSubjectivity", SubjectSubjectivity)
+    .input("ExplicitContent", ExplicitContent)
+    .input("TextAbout", TextAbout)
+    .input("EmailBody", EmailBody)
     .query(query);
-
+   
   res.status(201).send(response.data);
 });
 
