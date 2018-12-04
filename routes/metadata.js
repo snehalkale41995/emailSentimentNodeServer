@@ -161,6 +161,13 @@ router.get("/emaildata", async (req, res) => {
   res.send(result.recordset);
 });
 
+router.get("/emailList", async (req, res) => {
+  var query = "select Email from dbo.EmailList WHERE track=1 ";
+  const pool = await poolPromise;
+  const result = await pool.request().query(query);
+  res.send(result.recordset);
+});
+
 router.get("/verifiedEmails", async (req, res) => {
   var query = "select Id, Subject, Verified , IsExported from dbo.SentimentAnalysisMetadata WHERE (Verified = 0 OR Verified = 1) And IsExported = 0";
   const pool = await poolPromise;
